@@ -1,20 +1,47 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { createStackNavigator,  } from '@react-navigation/stack';
+import { NavigationContainer,  } from '@react-navigation/native';
+import LoginScreen from './components/LoginScreen';
+import RegisterScreen from './components/RegisterScreen';
+import AddToyScreen from './components/AddToyScreen';
+import RenterScreen from './components/RenterScreen';
+import ToyDetailScreen from './components/ToyDetailScreen';
+import ShoppingCartScreen from './components/ShoppingCartScreen';
+import ListToyScreen from './components/ListToyScreen';
+import UpdateToyScreen from './components/UpdateToyScreen';
+import OrderRentFormScreen from './components/OrderRentFormScreen';
+import OrderSaleFormScreen from './components/OrderSaleFormScreen';
+import StaffScreen from './components/StaffScreen';
 
-export default function App() {
+
+const Stack = createStackNavigator();
+
+
+function App() {
+
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+          
+        />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name='AddToy' component={AddToyScreen}/>
+        <Stack.Screen name='Renter' component={RenterScreen}/>
+        <Stack.Screen name='ToyDetail' component={ToyDetailScreen}/>
+        <Stack.Screen name="ShoppingCart" component={ShoppingCartScreen} />
+        <Stack.Screen name="ListToy" component={ListToyScreen} />
+        <Stack.Screen name="UpdateToy" component={UpdateToyScreen} />
+        <Stack.Screen name="OrderRentForm" component={OrderRentFormScreen} />
+        <Stack.Screen name="OrderSaleForm" component={OrderSaleFormScreen} />
+        <Stack.Screen name="Staff" component={StaffScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
