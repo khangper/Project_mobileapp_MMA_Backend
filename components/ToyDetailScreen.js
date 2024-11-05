@@ -16,21 +16,21 @@ import { FontAwesome } from "@expo/vector-icons"; // Import FontAwesome for icon
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const api = axios.create({
-    baseURL: 'http://10.0.2.2:5003',
-    timeout: 10000,
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }
-  });
+  baseURL: "http://192.168.217.139:5003",
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+});
 
-  api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      console.log('API Error:', error.response?.data || error.message);
-      throw error;
-    }
-  );
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.log("API Error:", error.response?.data || error.message);
+    throw error;
+  }
+);
 
 const ToyDetailScreen = ({ route }) => {
   const { toyId } = route.params;
@@ -71,49 +71,52 @@ const ToyDetailScreen = ({ route }) => {
       Alert.alert("Please provide both rating and comment");
       return;
     }
-  
+
     try {
       // Get token from AsyncStorage
       const token = await AsyncStorage.getItem("userToken");
-      
+
       // Add debug logging
       console.log("Token from AsyncStorage:", token);
-      
+
       // Check if token exists
       if (!token) {
         Alert.alert("Error", "Please login to submit feedback");
         return;
       }
-  
+
       const response = await api.post(
         `/api/toys/${toyId}/feedback`,
         { rating: userRating, comment: userComment },
-        { 
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          } 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
-  
+
       setFeedback(response.data.feedback);
       setUserRating(0);
       setUserComment("");
       fetchToyDetails();
-      
+
       Alert.alert("Success", "Feedback submitted successfully");
     } catch (error) {
-      console.log("Error submitting feedback:", error.response?.data || error.message);
-      
+      console.log(
+        "Error submitting feedback:",
+        error.response?.data || error.message
+      );
+
       if (error.response?.status === 401) {
         Alert.alert(
-          "Authentication Error", 
+          "Authentication Error",
           "Please login again to submit feedback"
         );
         // Optional: Navigate to login screen or handle re-authentication
         return;
       }
-      
+
       Alert.alert(
         "Error",
         "Failed to submit feedback. Please try again later."
@@ -151,9 +154,7 @@ const ToyDetailScreen = ({ route }) => {
   }
 
   return (
-    <View style={styles.container}
-    showsHorizontalScrollIndicator={false}
-    >
+    <View style={styles.container} showsHorizontalScrollIndicator={false}>
       <Image source={{ uri: toy.imageUrl }} style={styles.image} />
       <Text style={styles.title}>{toy.name}</Text>
       <Text style={styles.category}>Category: {toy.category}</Text>
@@ -162,8 +163,8 @@ const ToyDetailScreen = ({ route }) => {
       <Text style={styles.price}>Price/Week: ${toy.price.week}</Text>
       <Text style={styles.price}>Price/Two Weeks: ${toy.price.twoWeeks}</Text>
       {toy.fixedPrice && (
-  <Text style={styles.price}>Fixed Price: ${toy.fixedPrice}</Text>
-)}
+        <Text style={styles.price}>Fixed Price: ${toy.fixedPrice}</Text>
+      )}
       <Text style={styles.averageRating}>
         Average Rating: {toy.averageRating.toFixed(1)}{" "}
         <FontAwesome name="star" size={18} color="#ffd700" />
@@ -172,7 +173,7 @@ const ToyDetailScreen = ({ route }) => {
       <Text style={styles.sectionTitle}>User Feedback</Text>
       {feedback.length > 0 ? (
         <FlatList
-        // scrollEnabled={false}
+          // scrollEnabled={false}
           data={feedback}
           renderItem={renderFeedbackItem}
           keyExtractor={(item, index) => index.toString()}

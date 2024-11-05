@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
-import axios from 'axios';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Alert,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import axios from "axios";
+import { Picker } from "@react-native-picker/picker";
 
 const api = axios.create({
-  baseURL: 'http://10.0.2.2:5003',
+  baseURL: "http://192.168.217.139:5003",
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
 });
 
 const RegisterScreen = ({ navigation }) => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('supplier');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("renter"); // Default role to 'renter'
   const [loading, setLoading] = useState(false);
 
   const validateEmail = (email) => {
@@ -42,7 +51,7 @@ const RegisterScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await api.post('/api/auth/register', {
+      const response = await api.post("/api/auth/register", {
         username,
         email,
         password,
@@ -50,26 +59,21 @@ const RegisterScreen = ({ navigation }) => {
       });
 
       if (response.data) {
-        Alert.alert(
-          "Thành công",
-          "Đăng ký tài khoản thành công!",
-          [
-            {
-              text: "OK",
-              onPress: () => {
-                // Điều hướng sang trang Login
-                navigation.navigate('Login');
-              }
-            }
-          ]
-        );
+        Alert.alert("Thành công", "Đăng ký tài khoản thành công!", [
+          {
+            text: "OK",
+            onPress: () => {
+              // Điều hướng sang trang Login
+              navigation.navigate("Login");
+            },
+          },
+        ]);
       }
     } catch (error) {
       if (error.response) {
         Alert.alert(
           "Lỗi",
-          error.response.data.message || 
-          "Đăng ký thất bại. Vui lòng thử lại."
+          error.response.data.message || "Đăng ký thất bại. Vui lòng thử lại."
         );
       } else if (error.request) {
         Alert.alert(
@@ -113,29 +117,36 @@ const RegisterScreen = ({ navigation }) => {
         onChangeText={setPassword}
         editable={!loading}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Vai trò (supplier/customer)"
-        value={role}
-        onChangeText={setRole}
-        editable={!loading}
-        autoCapitalize="none"
-      />
+
+      {/* Role Picker */}
+      <View style={styles.pickerContainer}>
+        <Text style={styles.pickerLabel}>Vai trò</Text>
+        <Picker
+          selectedValue={role}
+          onValueChange={(itemValue) => setRole(itemValue)}
+          style={styles.picker}
+          enabled={!loading}
+        >
+          <Picker.Item label="Renter" value="renter" />
+          <Picker.Item label="Supplier" value="supplier" />
+        </Picker>
+      </View>
 
       <View style={styles.buttonContainer}>
-        <Button 
-          title={loading ? "Đang xử lý..." : "Đăng ký"} 
+        <Button
+          title={loading ? "Đang xử lý..." : "Đăng ký"}
           onPress={handleRegister}
           disabled={loading}
         />
       </View>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.loginLink}
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => navigation.navigate("Login")}
       >
         <Text style={styles.loginText}>
-          Bạn đã có tài khoản? <Text style={styles.loginTextBold}>Đăng nhập</Text>
+          Bạn đã có tài khoản?{" "}
+          <Text style={styles.loginTextBold}>Đăng nhập</Text>
         </Text>
       </TouchableOpacity>
     </View>
@@ -145,25 +156,41 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 30,
-    color: '#333',
+    color: "#333",
   },
   input: {
     height: 50,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderWidth: 1,
     marginBottom: 15,
     paddingHorizontal: 15,
     borderRadius: 8,
-    backgroundColor: '#fafafa',
+    backgroundColor: "#fafafa",
+    fontSize: 16,
+  },
+  pickerContainer: {
+    marginBottom: 15,
+  },
+  pickerLabel: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 5,
+  },
+  picker: {
+    height: 50,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 8,
+    backgroundColor: "#fafafa",
     fontSize: 16,
   },
   buttonContainer: {
@@ -171,16 +198,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   loginLink: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 15,
   },
   loginText: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   loginTextBold: {
-    color: '#007AFF',
-    fontWeight: 'bold',
+    color: "#007AFF",
+    fontWeight: "bold",
   },
 });
 

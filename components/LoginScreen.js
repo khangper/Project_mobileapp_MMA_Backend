@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Alert,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const api = axios.create({
-  baseURL: 'http://10.0.2.2:5003',
+  baseURL: "http://192.168.217.139:5003",
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
 });
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
@@ -26,51 +34,47 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      
-      const response = await api.post('/api/auth/login', {
+      const response = await api.post("/api/auth/login", {
         email,
         password,
       });
-      console.log('Response data:',response.data.user.role);
+      console.log("Response data:", response.data.user.role);
 
-      
       if (response.data) {
-        await AsyncStorage.setItem('userToken', response.data.token);
-        await AsyncStorage.setItem('userRole', response.data.user.role);
-       
-        if (response.data.user.role === 'supplier') {
+        await AsyncStorage.setItem("userToken", response.data.token);
+        await AsyncStorage.setItem("userRole", response.data.user.role);
+
+        if (response.data.user.role === "supplier") {
           try {
-            navigation.navigate('AddToy');
+            navigation.navigate("AddToy");
           } catch (navError) {
-            console.log('Navigation error:', navError);
-            Alert.alert('Lỗi', 'Không thể chuyển trang. ' + navError.message);
+            console.log("Navigation error:", navError);
+            Alert.alert("Lỗi", "Không thể chuyển trang. " + navError.message);
           }
-        } else if (response.data.user.role === 'renter') {
+        } else if (response.data.user.role === "renter") {
           try {
-            navigation.navigate('Renter');
+            navigation.navigate("Renter");
           } catch (navError) {
-            console.log('Navigation error:', navError);
-            Alert.alert('Lỗi', 'Không thể chuyển trang. ' + navError.message);
+            console.log("Navigation error:", navError);
+            Alert.alert("Lỗi", "Không thể chuyển trang. " + navError.message);
           }
-      } else if (response.data.user.role === 'staff') {
-        try {
-          navigation.navigate('Staff');
-        } catch (navError) {
-          console.log('Navigation error:', navError);
-          Alert.alert('Lỗi', 'Không thể chuyển trang. ' + navError.message);
-        }
-    }
-       else {
-          Alert.alert('Thông báo', `Role không hợp lệ: ${response.data.role}`);
+        } else if (response.data.user.role === "staff") {
+          try {
+            navigation.navigate("Staff");
+          } catch (navError) {
+            console.log("Navigation error:", navError);
+            Alert.alert("Lỗi", "Không thể chuyển trang. " + navError.message);
+          }
+        } else {
+          Alert.alert("Thông báo", `Role không hợp lệ: ${response.data.role}`);
         }
       }
-    } 
-    catch (error) {
+    } catch (error) {
       if (error.response) {
         Alert.alert(
           "Lỗi",
-          error.response.data.message || 
-          "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu."
+          error.response.data.message ||
+            "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu."
         );
       } else if (error.request) {
         Alert.alert(
@@ -80,13 +84,10 @@ const LoginScreen = ({ navigation }) => {
       } else {
         Alert.alert("Lỗi", "Có lỗi xảy ra. Vui lòng thử lại sau.");
       }
-    }
-     finally {
+    } finally {
       setLoading(false);
     }
   };
-
-
 
   return (
     <View style={styles.container}>
@@ -111,19 +112,20 @@ const LoginScreen = ({ navigation }) => {
       />
 
       <View style={styles.buttonContainer}>
-        <Button 
-          title={loading ? "Đang xử lý..." : "Đăng nhập"} 
+        <Button
+          title={loading ? "Đang xử lý..." : "Đăng nhập"}
           onPress={handleLogin}
           disabled={loading}
         />
       </View>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.registerLink}
-        onPress={() => navigation.navigate('Register')}
+        onPress={() => navigation.navigate("Register")}
       >
         <Text style={styles.registerText}>
-          Chưa có tài khoản? <Text style={styles.registerTextBold}>Đăng ký</Text>
+          Chưa có tài khoản?{" "}
+          <Text style={styles.registerTextBold}>Đăng ký</Text>
         </Text>
       </TouchableOpacity>
     </View>
@@ -133,25 +135,25 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 30,
-    color: '#333',
+    color: "#333",
   },
   input: {
     height: 50,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderWidth: 1,
     marginBottom: 15,
     paddingHorizontal: 15,
     borderRadius: 8,
-    backgroundColor: '#fafafa',
+    backgroundColor: "#fafafa",
     fontSize: 16,
   },
   buttonContainer: {
@@ -159,16 +161,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   registerLink: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 15,
   },
   registerText: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   registerTextBold: {
-    color: '#007AFF',
-    fontWeight: 'bold',
+    color: "#007AFF",
+    fontWeight: "bold",
   },
 });
 

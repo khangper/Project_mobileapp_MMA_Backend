@@ -12,6 +12,7 @@ import UpdateToyScreen from './components/UpdateToyScreen';
 import OrderRentFormScreen from './components/OrderRentFormScreen';
 import OrderSaleFormScreen from './components/OrderSaleFormScreen';
 import StaffScreen from './components/StaffScreen';
+import TransactionsScreen from './components/TransactionsScreen';
 
 
 const Stack = createStackNavigator();
@@ -39,6 +40,7 @@ function App() {
         <Stack.Screen name="OrderRentForm" component={OrderRentFormScreen} />
         <Stack.Screen name="OrderSaleForm" component={OrderSaleFormScreen} />
         <Stack.Screen name="Staff" component={StaffScreen} />
+        <Stack.Screen name="Transactions" component={TransactionsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
